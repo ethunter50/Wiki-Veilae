@@ -3,18 +3,18 @@ import { Routes, Route, Navigate, useNavigate, Outlet, useLocation } from 'react
 import './App.css'
 import api from './lib/axios'
 import Sidebar from './components/Sidebar'
-import Login from './components/Login'
-import UsersManager from './components/UsersManager'
+import Login from './pages/Login'
+import UsersManager from './pages/UsersManager'
 import ProtectedRoute from './components/ProtectedRoute'
-import AdminDashboard from './components/AdminDashboard'
-import UserDashboard from './components/UserDashboard'
-import WikiEditor from './components/WikiEditor'
-import PagesManager from './components/PagesManager'
-import CategoriesManager from './components/CategoriesManager'
-import GlobalManager from './components/GlobalManager'
-import PageView from './components/PageView'
-import SystemSettings from './components/SystemSettings'
-import MaintenancePage from './components/MaintenancePage'
+import AdminDashboard from './pages/AdminDashboard'
+import UserDashboard from './pages/UserDashboard'
+import WikiEditor from './pages/WikiEditor'
+import PagesManager from './pages/PagesManager'
+import CategoriesManager from './pages/CategoriesManager'
+import GlobalManager from './pages/GlobalManager'
+import PageView from './pages/PageView'
+import SystemSettings from './pages/SystemSettings'
+import MaintenancePage from './pages/MaintenancePage'
 
 
 
@@ -24,6 +24,8 @@ import MaintenancePage from './components/MaintenancePage'
 function App() {
   const [user, setUser] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [maintenanceMode, setMaintenanceMode] = useState(false);
+  const [maintenanceMessage, setMaintenanceMessage] = useState('');
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -32,12 +34,9 @@ function App() {
       // Check maintenance status first
       try {
         const maintRes = await api.get('/maintenance');
-        // Store in window or state (using window for quick dirty global access, but state is better if we wrap)
-        // For this single file component, let's just use a window property or a local state variable if we hoisted checking?
-        // Actually, let's just use checking here.
         if (maintRes.data.maintenance) {
-          (window as any).maintenanceMode = true;
-          (window as any).maintenanceMessage = maintRes.data.message;
+          setMaintenanceMode(true);
+          setMaintenanceMessage(maintRes.data.message);
         }
       } catch (e) { console.error(e); }
 
@@ -77,18 +76,11 @@ function App() {
     )
   }
 
-  // Maintenance Check - Strict Admin Only, but allow access to Login page
-  // If user is stuck in maintenance (e.g. non-admin logged in), they should probably see maintenance, 
-  // but if they explicitly go to /login (which redirects to / usually) it might be tricky.
-  // Actually, if they are logged in, /login redirects to /.
-  // So if they are non-admin and logged in, they are blocked on / (Maintenance).
-  // But maybe they want to Logout?
-  // We should pass a logout handler to MaintenancePage.
-
   const isLoginPage = location.pathname === '/login';
 
-  if (!isLoginPage && user && user.role !== 'admin' && (window as any).maintenanceMode) {
-    return <MaintenancePage message={(window as any).maintenanceMessage} onLogout={handleLogout} />;
+  // Maintenance Check: Block if maintenance is ON, NOT on login page, AND (User is NOT admin OR User is Guest)
+  if (maintenanceMode && !isLoginPage && (!user || user.role !== 'admin')) {
+    return <MaintenancePage message={maintenanceMessage} onLogout={user ? handleLogout : () => navigate('/login')} />;
   }
 
   return (

@@ -285,7 +285,8 @@ const CategoryLink = ({ category, depth, user }: { category: CategoryItem, depth
                         <div className="w-3.5" />
                     )}
                 </span>
-                <span className="flex-shrink-0 text-indigo-500 opacity-80"><Folder size={16} /></span>
+                <span className="flex-shrink-0 text-indigo-500 opacity-80"></span>
+                {/* <span className="flex-shrink-0 text-indigo-500 opacity-80"><Folder size={16} /></span> */}
                 <span className="truncate flex-1">{category.name}</span>
             </div>
 
@@ -309,10 +310,10 @@ const CategoryLink = ({ category, depth, user }: { category: CategoryItem, depth
     );
 };
 
-const Folder = ({ size, className }: { size: number, className?: string }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-        <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z" />
-    </svg>
-);
+// const Folder = ({ size, className }: { size: number, className?: string }) => (
+//     <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+//         <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z" />
+//     </svg>
+// );
 
 export default Sidebar;

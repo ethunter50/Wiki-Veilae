@@ -15,7 +15,7 @@ class SettingController extends Controller
         $message = SystemSetting::where('key', 'maintenance_reason')->first();
 
         return response()->json([
-            'maintenance' => $maintenance ? $maintenance->value === 'true' : false,
+            'maintenance' => $maintenance ? filter_var($maintenance->value, FILTER_VALIDATE_BOOLEAN) : false,
             'message' => $message ? $message->value : '',
         ]);
     }
